@@ -5,71 +5,35 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.content.Context;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 
-public class WeatherProcessing{// implements Filterable{
+public class WeatherProcessing{
 	
 
 
 	private static String LOG_TAG = "Forecast Error";
-	private ArrayList<String> resultList;
 	
 	public WeatherProcessing(Context context, int resource) {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-/*
-	
-	 @Override
-	    public Filter getFilter() {
-	        Filter filter = new Filter() {
-	            @Override
-	            protected FilterResults performFiltering(CharSequence constraint) {
-	                FilterResults filterResults = new FilterResults();
-	                if (constraint != null) {
-	                    // Retrieve the autocomplete results.
-	                    resultList = getForecast(constraint.toString());                
-
-	                    // Assign the data to the FilterResults
-	                    filterResults.values = resultList;
-	                    filterResults.count = (resultList.size());
-	                }
-	                return filterResults;
-	            }
-
-				@Override
-				protected void publishResults(CharSequence constraint,
-						FilterResults results) {
-					// TODO Auto-generated method stub
-					
-				}};
-	         
-	        return filter;
-	    }
-	*/
 	
 	
 	
-	public static ArrayList<String> getForecast(String string) {
-	 ArrayList<String> resultList = null;
+	public static void getForecast(String state, String city, WeatherInfo cityInfo) {
      HttpURLConnection conn = null;
      StringBuilder jsonResults = new StringBuilder();
      try {
      	
      	StringBuilder sb = new StringBuilder("http://api.wunderground.com/api/");
-     	sb.append("9f7e0bf707f4dafa/conditions/q/CA/San_Fransisco.json");
+     	sb.append("9f7e0bf707f4dafa/conditions/q/");
+     	sb.append(state);
+     	sb.append("/");
+     	sb.append(city);
+     	sb.append(".json");
 
          URL url = new URL(sb.toString());
          conn = (HttpURLConnection) url.openConnection();
@@ -83,27 +47,78 @@ public class WeatherProcessing{// implements Filterable{
          }
      } catch (MalformedURLException e) {
          Log.e(LOG_TAG, "Error processing Places API URL", e);
-         return resultList;
      } catch (IOException e) {
          Log.e(LOG_TAG, "Error connecting to Places API", e);
-         return resultList;
      } finally {
          if (conn != null) {
              conn.disconnect();
          }
      }
-     resultList = new ArrayList<String>(2);
      try {
          // Create a JSON object hierarchy from the results
     	 
          JSONObject jsonObj = new JSONObject(jsonResults.toString());
          JSONObject Observe = jsonObj.getJSONObject("current_observation");
-         resultList.add(Observe.getString("temp_f"));
-         Log.d("test", resultList.toString());
+         cityInfo.setTemp(Observe.getString("temp_f"));
+         cityInfo.setHumidity(Observe.getString("relative_humidity"));
+         cityInfo.setPrecipitation(Observe.getString("precip_today_string"));
+         cityInfo.setWeather(Observe.getString("weather"));
+         cityInfo.setWind(Observe.getString("wind_string"));
+         Observe = jsonObj.getJSONObject("current_observation").getJSONObject("display_location");
+         cityInfo.setCity(Observe.getString("city"));
+         cityInfo.setState(Observe.getString("state"));
+         cityInfo.setCountry(Observe.getString("country"));
+         
      } catch (JSONException e) {
          Log.e(LOG_TAG, "Cannot process JSON results", e);
      }
-     
-	return resultList;
 }
+	
+	public static void getForecast(String state, WeatherInfo cityInfo) {
+	     HttpURLConnection conn = null;
+	     StringBuilder jsonResults = new StringBuilder();
+	     try {
+	     	
+	     	StringBuilder sb = new StringBuilder("http://api.wunderground.com/api/");
+	     	sb.append("9f7e0bf707f4dafa/conditions/q/");
+	     	sb.append(state);
+	     	sb.append(".json");
+
+	         URL url = new URL(sb.toString());
+	         conn = (HttpURLConnection) url.openConnection();
+	         InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+	         // Load the results into a StringBuilder
+	         int read;
+	         char[] buff = new char[1024];
+	         while ((read = in.read(buff)) != -1) {
+	             jsonResults.append(buff, 0, read);
+	         }
+	     } catch (MalformedURLException e) {
+	         Log.e(LOG_TAG, "Error processing Places API URL", e);
+	     } catch (IOException e) {
+	         Log.e(LOG_TAG, "Error connecting to Places API", e);
+	     } finally {
+	         if (conn != null) {
+	             conn.disconnect();
+	         }
+	     }
+	     try {
+	         // Create a JSON object hierarchy from the results
+	    	 
+	         JSONObject jsonObj = new JSONObject(jsonResults.toString());
+	         JSONObject Observe = jsonObj.getJSONObject("current_observation");
+	         cityInfo.setTemp(Observe.getString("temp_f"));
+	         cityInfo.setHumidity(Observe.getString("relative_humidity"));
+	         cityInfo.setPrecipitation(Observe.getString("precip_today_string"));
+	         cityInfo.setWeather(Observe.getString("weather"));
+	         cityInfo.setWind(Observe.getString("wind_string"));
+	         Observe = jsonObj.getJSONObject("current_observation").getJSONObject("display_location");
+	         cityInfo.setState(Observe.getString("state"));
+	         cityInfo.setCountry(Observe.getString("country"));
+	         
+	     } catch (JSONException e) {
+	         Log.e(LOG_TAG, "Cannot process JSON results", e);
+	     }
+	}
 }
