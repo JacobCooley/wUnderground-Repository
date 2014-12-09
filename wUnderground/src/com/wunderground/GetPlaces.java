@@ -53,7 +53,7 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults filterResults = new FilterResults();
 				ArrayList<String> queryResults;
-				if (constraint != null || constraint.length() != 0) {
+				if (constraint != null){// || constraint.length() != 0) {
 					// Retrieve the autocomplete results.
 					queryResults = autocomplete(constraint.toString());
 					// Assign the data to the FilterResults
@@ -65,6 +65,7 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 				return filterResults;
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {

@@ -1,12 +1,7 @@
 package com.wunderground;
 
 public class WeatherInfo {
-	
-	
-	
-	
-	
-	
+
 	private String weather;
 	private String temp;
 	private String humidity;
@@ -15,12 +10,9 @@ public class WeatherInfo {
 	private String city;
 	private String state;
 	private String country;
-	
-	
-	
 
-	public WeatherInfo(){
-		
+	public WeatherInfo() {
+
 	}
 
 	public String getCity() {

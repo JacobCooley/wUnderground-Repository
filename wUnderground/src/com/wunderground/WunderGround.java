@@ -2,18 +2,15 @@ package com.wunderground;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.AutoCompleteTextView.Validator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -23,7 +20,16 @@ import com.example.wunderground.R;
 
 public class WunderGround extends Activity implements OnItemClickListener {
 
-	private String myKey;
+	protected static String myKey1 = null;
+	protected static String myKey2 = null;
+	protected static String myKey3 = null;
+	protected static String myKey4 = null;
+	protected static String myKey5 = null;
+	private AutoCompleteTextView autoCompView1;
+	private AutoCompleteTextView autoCompView2;
+	private AutoCompleteTextView autoCompView3;
+	private AutoCompleteTextView autoCompView4;
+	private AutoCompleteTextView autoCompView5;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,49 +41,28 @@ public class WunderGround extends Activity implements OnItemClickListener {
 		//
 		// ********************************************************************************
 
-		TextWatcher tw = new TextWatcher() {
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				myKey = null;
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
-			}
-
-		};
-		final AutoCompleteTextView autoCompView1 = (AutoCompleteTextView) findViewById(R.id.city1);
+		autoCompView1 = (AutoCompleteTextView) findViewById(R.id.city1);
 		autoCompView1.setAdapter(new GetPlaces(this, R.layout.text_file));
 		autoCompView1.setOnItemClickListener(this);
-		autoCompView1.addTextChangedListener(tw);
-		final AutoCompleteTextView autoCompView2 = (AutoCompleteTextView) findViewById(R.id.city2);
+		autoCompView1.addTextChangedListener(new Validation("myKey1"));
+
+		autoCompView2 = (AutoCompleteTextView) findViewById(R.id.city2);
 		autoCompView2.setAdapter(new GetPlaces(this, R.layout.text_file));
 		autoCompView2.setOnItemClickListener(this);
-		autoCompView2.addTextChangedListener(tw);
-		final AutoCompleteTextView autoCompView3 = (AutoCompleteTextView) findViewById(R.id.city3);
+		autoCompView2.addTextChangedListener(new Validation("myKey2"));
+
+		autoCompView3 = (AutoCompleteTextView) findViewById(R.id.city3);
 		autoCompView3.setAdapter(new GetPlaces(this, R.layout.text_file));
 		autoCompView3.setOnItemClickListener(this);
-		autoCompView3.addTextChangedListener(tw);
-		final AutoCompleteTextView autoCompView4 = (AutoCompleteTextView) findViewById(R.id.city4);
+		autoCompView3.addTextChangedListener(new Validation("myKey3"));
+		autoCompView4 = (AutoCompleteTextView) findViewById(R.id.city4);
 		autoCompView4.setAdapter(new GetPlaces(this, R.layout.text_file));
 		autoCompView4.setOnItemClickListener(this);
-		autoCompView4.addTextChangedListener(tw);
-		final AutoCompleteTextView autoCompView5 = (AutoCompleteTextView) findViewById(R.id.city5);
+		autoCompView4.addTextChangedListener(new Validation("myKey4"));
+		autoCompView5 = (AutoCompleteTextView) findViewById(R.id.city5);
 		autoCompView5.setAdapter(new GetPlaces(this, R.layout.text_file));
 		autoCompView5.setOnItemClickListener(this);
-		autoCompView5.addTextChangedListener(tw);
+		autoCompView5.addTextChangedListener(new Validation("myKey5"));
 
 		// ********************************************************************************
 
@@ -110,142 +95,113 @@ public class WunderGround extends Activity implements OnItemClickListener {
 				WeatherInfo cityInfo5 = null;
 
 				// TODO Auto-generated method stub
-				if (myKey != null) {
-					if (check2.isEnabled()
-							&& !(check2.isChecked())
-							&& (autoCompView1 != null || !(autoCompView1
-									.getText().equals("")))) {
-						cityInfo1 = new WeatherInfo();
-						String str = autoCompView1.getText().toString();
-						String str1 = str.replace(" ", "%20");
-						String weatherLocation[] = str1.split(",");
-						foreCast(weatherLocation, cityInfo1);
+				if (check2.isEnabled() && !(check2.isChecked())
+						&& myKey1 != null) {
+					Log.d("MY KEY ", myKey1);
+					cityInfo1 = new WeatherInfo();
+					String str = autoCompView1.getText().toString();
+					String str1 = str.replace(" ", "%20");
+					String weatherLocation[] = str1.split(",");
+					foreCast(weatherLocation, cityInfo1);
 
-					} else if (check3.isEnabled()
-							&& !(check3.isChecked())
-							&& (autoCompView1 != null || !(autoCompView1
-									.getText().equals("")))
-							&& (autoCompView2 != null || !(autoCompView2
-									.getText().equals("")))) {
-						cityInfo1 = new WeatherInfo();
-						cityInfo2 = new WeatherInfo();
-						String str = autoCompView1.getText().toString();
-						String str1 = str.replace(" ", "%20");
-						String weatherLocation[] = str1.split(",");
-						foreCast(weatherLocation, cityInfo1);
+				} else if (check3.isEnabled() && !(check3.isChecked())
+						&& myKey1 != null && myKey2 != null) {
+					cityInfo1 = new WeatherInfo();
+					cityInfo2 = new WeatherInfo();
+					String str = autoCompView1.getText().toString();
+					String str1 = str.replace(" ", "%20");
+					String weatherLocation[] = str1.split(",");
+					foreCast(weatherLocation, cityInfo1);
 
-						str = autoCompView2.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo2);
+					str = autoCompView2.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo2);
 
-					}
+				}
 
-					else if (check4.isEnabled()
-							&& !(check4.isChecked())
-							&& (autoCompView1 != null || !(autoCompView1
-									.getText().equals("")))
-							&& (autoCompView2 != null || !(autoCompView2
-									.getText().equals("")))
-							&& (autoCompView3.getText() != null || !(autoCompView3
-									.getText().equals("")))) {
-						cityInfo1 = new WeatherInfo();
-						cityInfo2 = new WeatherInfo();
-						cityInfo3 = new WeatherInfo();
-						String str = autoCompView1.getText().toString();
-						String str1 = str.replace(" ", "%20");
-						String weatherLocation[] = str1.split(",");
-						foreCast(weatherLocation, cityInfo1);
+				else if (check4.isEnabled() && !(check4.isChecked())
+						&& myKey1 != null && myKey2 != null && myKey3 != null) {
+					cityInfo1 = new WeatherInfo();
+					cityInfo2 = new WeatherInfo();
+					cityInfo3 = new WeatherInfo();
+					String str = autoCompView1.getText().toString();
+					String str1 = str.replace(" ", "%20");
+					String weatherLocation[] = str1.split(",");
+					foreCast(weatherLocation, cityInfo1);
 
-						str = autoCompView2.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo2);
+					str = autoCompView2.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo2);
 
-						str = autoCompView3.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo3);
+					str = autoCompView3.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo3);
 
-					}
+				}
 
-					else if (check5.isEnabled()
-							&& !(check5.isChecked())
-							&& (autoCompView1 != null || !(autoCompView1
-									.getText().equals("")))
-							&& ((autoCompView2 != null) || !(autoCompView2
-									.getText().equals("")))
-							&& ((autoCompView3 != null) || !(autoCompView3
-									.getText().equals("")))
-							&& ((autoCompView4 != null) || !(autoCompView4
-									.getText().equals("")))) {
-						cityInfo1 = new WeatherInfo();
-						cityInfo2 = new WeatherInfo();
-						cityInfo3 = new WeatherInfo();
-						cityInfo4 = new WeatherInfo();
-						String str = autoCompView1.getText().toString();
-						String str1 = str.replace(" ", "%20");
-						String weatherLocation[] = str1.split(",");
-						foreCast(weatherLocation, cityInfo1);
+				else if (check5.isEnabled() && !(check5.isChecked())
+						&& myKey1 != null && myKey2 != null && myKey3 != null
+						&& myKey4 != null) {
+					cityInfo1 = new WeatherInfo();
+					cityInfo2 = new WeatherInfo();
+					cityInfo3 = new WeatherInfo();
+					cityInfo4 = new WeatherInfo();
+					String str = autoCompView1.getText().toString();
+					String str1 = str.replace(" ", "%20");
+					String weatherLocation[] = str1.split(",");
+					foreCast(weatherLocation, cityInfo1);
 
-						str = autoCompView2.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo2);
+					str = autoCompView2.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo2);
 
-						str = autoCompView3.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo3);
+					str = autoCompView3.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo3);
 
-						str = autoCompView4.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo4);
+					str = autoCompView4.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo4);
 
-					} else if (check5.isEnabled()
-							&& (check5.isChecked())
-							&& ((autoCompView1 != null) || !(autoCompView1
-									.getText().equals("")))
-							&& ((autoCompView2 != null) || !(autoCompView2
-									.getText().equals("")))
-							&& ((autoCompView3 != null) || !(autoCompView3
-									.getText().equals("")))
-							&& ((autoCompView4 != null) || !(autoCompView4
-									.getText().equals("")))
-							&& ((autoCompView5 != null) || !(autoCompView1
-									.getText().equals("")))) {
-						cityInfo1 = new WeatherInfo();
-						cityInfo2 = new WeatherInfo();
-						cityInfo3 = new WeatherInfo();
-						cityInfo4 = new WeatherInfo();
-						cityInfo5 = new WeatherInfo();
-						String str = autoCompView1.getText().toString();
-						String str1 = str.replace(" ", "%20");
-						String weatherLocation[] = str1.split(",");
-						foreCast(weatherLocation, cityInfo1);
+				} else if (check5.isEnabled() && (check5.isChecked())
+						&& myKey1 != null && myKey2 != null && myKey3 != null
+						&& myKey4 != null && myKey5 != null) {
+					cityInfo1 = new WeatherInfo();
+					cityInfo2 = new WeatherInfo();
+					cityInfo3 = new WeatherInfo();
+					cityInfo4 = new WeatherInfo();
+					cityInfo5 = new WeatherInfo();
+					String str = autoCompView1.getText().toString();
+					String str1 = str.replace(" ", "%20");
+					String weatherLocation[] = str1.split(",");
+					foreCast(weatherLocation, cityInfo1);
 
-						str = autoCompView2.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo2);
+					str = autoCompView2.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo2);
 
-						str = autoCompView3.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo3);
+					str = autoCompView3.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo3);
 
-						str = autoCompView4.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo4);
+					str = autoCompView4.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo4);
 
-						str = autoCompView5.getText().toString();
-						str1 = str.replace(" ", "%20");
-						weatherLocation = str1.split(",");
-						foreCast(weatherLocation, cityInfo5);
+					str = autoCompView5.getText().toString();
+					str1 = str.replace(" ", "%20");
+					weatherLocation = str1.split(",");
+					foreCast(weatherLocation, cityInfo5);
 
-					}
 				} else {
 
 					Toast.makeText(getApplicationContext(),
@@ -256,26 +212,31 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 			}
 
-			private void foreCast(final String string[], final WeatherInfo cityInfo) {
-				Thread thread = new Thread()
-				{
-				    @Override
-				    public void run() {
-							if (string.length == 1 && !(string.equals(""))) {
-								WeatherProcessing.getForecast(string[0], cityInfo);
-							}
-							if (string.length >= 2 && !(string.equals(""))) {
-								WeatherProcessing.getForecast(string[1], string[0],
-										cityInfo);
-							}
-						
-				    }
+			private void foreCast(final String string[],
+					final WeatherInfo cityInfo) {
+				Thread thread = new Thread() {
+					@Override
+					public void run() {
+						if (string.length == 1 && !(string.equals(""))) {
+
+							runOnUiThread(new Runnable() {
+								public void run() {
+									String str = "Choose a entry in the formate (City, State)";
+									Toast.makeText(getApplicationContext(),
+											str, Toast.LENGTH_LONG).show();
+								}
+							});
+
+						}
+						if (string.length >= 2 && !(string.equals(""))) {
+							WeatherProcessing.getForecast(string[1], string[0],
+									cityInfo);
+						}
+
+					}
 				};
 
 				thread.start();
-					
-				
-				
 
 			}
 
@@ -397,7 +358,18 @@ public class WunderGround extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		// TODO Auto-generated method stub
-		myKey = (String) parent.getItemAtPosition(position);
-		Toast.makeText(this, myKey, Toast.LENGTH_SHORT).show();
+
+		if (autoCompView1.isFocused()) {
+			myKey1 = (String) parent.getItemAtPosition(position);
+		} else if (autoCompView2.isFocused()) {
+			myKey2 = (String) parent.getItemAtPosition(position);
+		} else if (autoCompView3.isFocused()) {
+			myKey3 = (String) parent.getItemAtPosition(position);
+		} else if (autoCompView4.isFocused()) {
+			myKey4 = (String) parent.getItemAtPosition(position);
+		} else if (autoCompView5.isFocused()) {
+			myKey5 = (String) parent.getItemAtPosition(position);
+		}
+
 	}
 }
