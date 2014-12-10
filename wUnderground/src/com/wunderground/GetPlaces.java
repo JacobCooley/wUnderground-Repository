@@ -21,10 +21,12 @@ import android.widget.Filterable;
 public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 
 	private static final String LOG_TAG = "AUTOCOMPLETE ERROR";
+	private Context mContext;
 	private ArrayList<String> resultList;
 
 	public GetPlaces(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
+		this.mContext = context;
 	}
 
 	@Override
@@ -53,14 +55,15 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults filterResults = new FilterResults();
 				ArrayList<String> queryResults;
-				if (constraint != null){// || constraint.length() != 0) {
+				if (constraint != null) {// || constraint.length() != 0) {
 					// Retrieve the autocomplete results.
 					queryResults = autocomplete(constraint.toString());
+
 					// Assign the data to the FilterResults
 					filterResults.values = queryResults;
 					filterResults.count = queryResults.size();
 				} else {
-					resultList = new ArrayList<String>();
+					queryResults = new ArrayList<String>();
 				}
 				return filterResults;
 			}
@@ -72,6 +75,7 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 				resultList = (ArrayList<String>) results.values;
 				if (results != null && results.count > 0) {
 					notifyDataSetChanged();
+					((WunderGround) mContext).setValidWords(resultList);
 				} else {
 					notifyDataSetInvalidated();
 				}
@@ -90,7 +94,7 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 			StringBuilder sb = new StringBuilder(
 					"http://autocomplete.wunderground.com/aq?query=");
 			sb.append(URLEncoder.encode(string, "utf8"));
-
+			sb.append("&c=US");
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
 			InputStreamReader in = new InputStreamReader(conn.getInputStream());

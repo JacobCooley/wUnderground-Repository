@@ -1,15 +1,18 @@
 package com.wunderground;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,18 +21,16 @@ import android.widget.Toast;
 
 import com.example.wunderground.R;
 
-public class WunderGround extends Activity implements OnItemClickListener {
+public class WunderGround extends Activity {
 
-	protected static String myKey1 = null;
-	protected static String myKey2 = null;
-	protected static String myKey3 = null;
-	protected static String myKey4 = null;
-	protected static String myKey5 = null;
+
+
 	private AutoCompleteTextView autoCompView1;
 	private AutoCompleteTextView autoCompView2;
 	private AutoCompleteTextView autoCompView3;
 	private AutoCompleteTextView autoCompView4;
 	private AutoCompleteTextView autoCompView5;
+	private ArrayList<String> validWords, concreteWords;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +41,40 @@ public class WunderGround extends Activity implements OnItemClickListener {
 		// autocomplete api
 		//
 		// ********************************************************************************
+		validWords = new ArrayList<String>();
+		concreteWords = new ArrayList<String>();
 
 		autoCompView1 = (AutoCompleteTextView) findViewById(R.id.city1);
 		autoCompView1.setAdapter(new GetPlaces(this, R.layout.text_file));
-		autoCompView1.setOnItemClickListener(this);
-		autoCompView1.addTextChangedListener(new Validation("myKey1"));
-
+		autoCompView1.setValidator(new Validator());
 		autoCompView2 = (AutoCompleteTextView) findViewById(R.id.city2);
 		autoCompView2.setAdapter(new GetPlaces(this, R.layout.text_file));
-		autoCompView2.setOnItemClickListener(this);
-		autoCompView2.addTextChangedListener(new Validation("myKey2"));
-
+		autoCompView2.setValidator(new Validator());
 		autoCompView3 = (AutoCompleteTextView) findViewById(R.id.city3);
 		autoCompView3.setAdapter(new GetPlaces(this, R.layout.text_file));
-		autoCompView3.setOnItemClickListener(this);
-		autoCompView3.addTextChangedListener(new Validation("myKey3"));
+		autoCompView3.setValidator(new Validator());
 		autoCompView4 = (AutoCompleteTextView) findViewById(R.id.city4);
 		autoCompView4.setAdapter(new GetPlaces(this, R.layout.text_file));
-		autoCompView4.setOnItemClickListener(this);
-		autoCompView4.addTextChangedListener(new Validation("myKey4"));
+		autoCompView4.setValidator(new Validator());
 		autoCompView5 = (AutoCompleteTextView) findViewById(R.id.city5);
 		autoCompView5.setAdapter(new GetPlaces(this, R.layout.text_file));
-		autoCompView5.setOnItemClickListener(this);
-		autoCompView5.addTextChangedListener(new Validation("myKey5"));
+		autoCompView5.setValidator(new Validator());
+		
+		autoCompView1.setVisibility(View.INVISIBLE);
+		autoCompView1.setThreshold(1);
+		autoCompView1.setOnKeyListener(new KeyListener(autoCompView1));
+		autoCompView2.setVisibility(View.INVISIBLE);
+		autoCompView2.setThreshold(1);
+		autoCompView2.setOnKeyListener(new KeyListener(autoCompView2));
+		autoCompView3.setVisibility(View.INVISIBLE);
+		autoCompView3.setThreshold(1);
+		autoCompView3.setOnKeyListener(new KeyListener(autoCompView3));
+		autoCompView4.setVisibility(View.INVISIBLE);
+		autoCompView4.setThreshold(1);
+		autoCompView4.setOnKeyListener(new KeyListener(autoCompView4));
+		autoCompView5.setVisibility(View.INVISIBLE);
+		autoCompView5.setThreshold(1);
+		autoCompView5.setOnKeyListener(new KeyListener(autoCompView5));
 
 		// ********************************************************************************
 
@@ -71,17 +83,6 @@ public class WunderGround extends Activity implements OnItemClickListener {
 		final CheckBox check3 = (CheckBox) findViewById(R.id.checkBox3);
 		final CheckBox check4 = (CheckBox) findViewById(R.id.checkBox4);
 		final CheckBox check5 = (CheckBox) findViewById(R.id.checkBox5);
-
-		autoCompView1.setVisibility(View.INVISIBLE);
-		autoCompView1.setThreshold(1);
-		autoCompView2.setVisibility(View.INVISIBLE);
-		autoCompView2.setThreshold(1);
-		autoCompView3.setVisibility(View.INVISIBLE);
-		autoCompView3.setThreshold(1);
-		autoCompView4.setVisibility(View.INVISIBLE);
-		autoCompView4.setThreshold(1);
-		autoCompView5.setVisibility(View.INVISIBLE);
-		autoCompView5.setThreshold(1);
 
 		Button clickButton = (Button) findViewById(R.id.button1);
 		clickButton.setOnClickListener(new OnClickListener() {
@@ -93,19 +94,24 @@ public class WunderGround extends Activity implements OnItemClickListener {
 				WeatherInfo cityInfo3 = null;
 				WeatherInfo cityInfo4 = null;
 				WeatherInfo cityInfo5 = null;
+				autoCompView1.clearFocus();
+				autoCompView2.clearFocus();
+				autoCompView3.clearFocus();
+				autoCompView4.clearFocus();
+				autoCompView5.clearFocus();
 
 				// TODO Auto-generated method stub
-				if (check2.isEnabled() && !(check2.isChecked())
-						&& myKey1 != null) {
-					Log.d("MY KEY ", myKey1);
+				if (!(check.isChecked())) {
+					Toast.makeText(getApplicationContext(),
+							"Select at least one City", Toast.LENGTH_SHORT).show();
+				} else if (check2.isEnabled() && !(check2.isChecked())) {
 					cityInfo1 = new WeatherInfo();
 					String str = autoCompView1.getText().toString();
 					String str1 = str.replace(" ", "%20");
 					String weatherLocation[] = str1.split(",");
 					foreCast(weatherLocation, cityInfo1);
 
-				} else if (check3.isEnabled() && !(check3.isChecked())
-						&& myKey1 != null && myKey2 != null) {
+				} else if (check3.isEnabled() && !(check3.isChecked())) {
 					cityInfo1 = new WeatherInfo();
 					cityInfo2 = new WeatherInfo();
 					String str = autoCompView1.getText().toString();
@@ -120,8 +126,7 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 				}
 
-				else if (check4.isEnabled() && !(check4.isChecked())
-						&& myKey1 != null && myKey2 != null && myKey3 != null) {
+				else if (check4.isEnabled() && !(check4.isChecked())) {
 					cityInfo1 = new WeatherInfo();
 					cityInfo2 = new WeatherInfo();
 					cityInfo3 = new WeatherInfo();
@@ -142,9 +147,7 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 				}
 
-				else if (check5.isEnabled() && !(check5.isChecked())
-						&& myKey1 != null && myKey2 != null && myKey3 != null
-						&& myKey4 != null) {
+				else if (check5.isEnabled() && !(check5.isChecked())) {
 					cityInfo1 = new WeatherInfo();
 					cityInfo2 = new WeatherInfo();
 					cityInfo3 = new WeatherInfo();
@@ -169,9 +172,7 @@ public class WunderGround extends Activity implements OnItemClickListener {
 					weatherLocation = str1.split(",");
 					foreCast(weatherLocation, cityInfo4);
 
-				} else if (check5.isEnabled() && (check5.isChecked())
-						&& myKey1 != null && myKey2 != null && myKey3 != null
-						&& myKey4 != null && myKey5 != null) {
+				} else if (check5.isEnabled() && (check5.isChecked())) {
 					cityInfo1 = new WeatherInfo();
 					cityInfo2 = new WeatherInfo();
 					cityInfo3 = new WeatherInfo();
@@ -210,6 +211,10 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 				}
 
+				// Intent intent = new
+				// Intent(WunderGround.this,MapDisplay.class);
+				// startActivity(intent);
+
 			}
 
 			private void foreCast(final String string[],
@@ -221,9 +226,9 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 							runOnUiThread(new Runnable() {
 								public void run() {
-									String str = "Choose a entry in the formate (City, State)";
+									String str = "Choose a entry in the format (City, State)";
 									Toast.makeText(getApplicationContext(),
-											str, Toast.LENGTH_LONG).show();
+											str, Toast.LENGTH_SHORT).show();
 								}
 							});
 
@@ -335,6 +340,87 @@ public class WunderGround extends Activity implements OnItemClickListener {
 
 	}
 
+	public void setValidWords(ArrayList<String> list) {
+		validWords = list;
+	}
+
+	class Validator implements AutoCompleteTextView.Validator {
+
+		@Override
+		public boolean isValid(CharSequence text) {
+			Log.v("Test", "Checking if valid: " + text);
+			for (String s : validWords)
+				if (s.toString()
+						.toLowerCase(Locale.getDefault())
+						.equals(text.toString()
+								.toLowerCase(Locale.getDefault()))) {
+					concreteWords.add(text.toString());
+					return true;
+				}
+			for (String s : concreteWords)
+				if (s.toString()
+						.toLowerCase(Locale.getDefault())
+						.equals(text.toString()
+								.toLowerCase(Locale.getDefault()))) {
+					return true;
+
+				}
+			return false;
+		}
+
+		@Override
+		public CharSequence fixText(CharSequence invalidText) {
+			Log.v("Test", "Returning fixed text");
+
+			/*
+			 * I'm just returning an empty string here, so the field will be
+			 * blanked, but you could put any kind of action here, like popping
+			 * up a dialog?
+			 * 
+			 * Whatever value you return here must be in the list of valid
+			 * words.
+			 */
+			return "";
+		}
+	}
+
+	class FocusListener implements View.OnFocusChangeListener {
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			Log.v("Test", "Focus changed");
+			if (v.getId() == R.id.city1 && !hasFocus) {
+				Log.v("Test", "Performing validation");
+				((AutoCompleteTextView) v).performValidation();
+			}
+		}
+	}
+	
+	class KeyListener implements OnKeyListener
+	{
+		private AutoCompleteTextView text;
+		
+		public KeyListener(AutoCompleteTextView t){
+			this.text = t;
+		}
+	     /**
+	      * This listens for the user to press the enter button on 
+	      * the keyboard and then hides the virtual keyboard
+	      */
+		@Override
+		public boolean onKey(View arg0, int arg1, KeyEvent event) {
+	        // If the event is a key-down event on the "enter" button
+	        if ( (event.getAction() == KeyEvent.ACTION_DOWN  ) &&
+	             (arg1           == KeyEvent.KEYCODE_ENTER)   )
+	        {               
+	        	InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(text.getWindowToken(), 0);   
+	                return true;
+	        }
+	        return false;
+	     }
+	} 
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -354,22 +440,4 @@ public class WunderGround extends Activity implements OnItemClickListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		// TODO Auto-generated method stub
-
-		if (autoCompView1.isFocused()) {
-			myKey1 = (String) parent.getItemAtPosition(position);
-		} else if (autoCompView2.isFocused()) {
-			myKey2 = (String) parent.getItemAtPosition(position);
-		} else if (autoCompView3.isFocused()) {
-			myKey3 = (String) parent.getItemAtPosition(position);
-		} else if (autoCompView4.isFocused()) {
-			myKey4 = (String) parent.getItemAtPosition(position);
-		} else if (autoCompView5.isFocused()) {
-			myKey5 = (String) parent.getItemAtPosition(position);
-		}
-
-	}
 }
