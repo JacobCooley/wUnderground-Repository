@@ -19,7 +19,7 @@ public class WeatherProcessing {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void getForecast(String state, String city,
+	public static WeatherInfo getForecast(String state, String city,
 			WeatherInfo cityInfo) {
 		HttpURLConnection conn = null;
 		StringBuilder jsonResults = new StringBuilder();
@@ -32,7 +32,6 @@ public class WeatherProcessing {
 			sb.append("/");
 			sb.append(city);
 			sb.append(".json");
-			Log.d("",sb.toString());
 
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
@@ -72,6 +71,7 @@ public class WeatherProcessing {
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, "Cannot process JSON results", e);
 		}
+		return cityInfo;
 	}
 
 	public static void getForecast(String state, WeatherInfo cityInfo) {

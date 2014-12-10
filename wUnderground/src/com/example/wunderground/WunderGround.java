@@ -27,13 +27,15 @@ public class WunderGround extends Activity {
 
 	private AutoCompleteTextView[] autoCompView;
 	private CheckBox[] check;
-	private WeatherInfo[] cityInfo;
+	private static WeatherInfo[] cityInfo;
 	private ArrayList<String> validWords, concreteWords;
+	private Intent intent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wunder_ground);
+		intent = new Intent(this, MapDisplay.class);
 
 		// Setting the adapters for the textboxes using Wundergrounds
 		// autocomplete api
@@ -88,14 +90,20 @@ public class WunderGround extends Activity {
 							.show();
 				} else if (check[1].isEnabled() && !(check[1].isChecked())) {
 					autoCompView[0].requestFocus();
-					if (!(autoCompView[0].equals(0)) && autoCompView[0] != null)
+					if (!(autoCompView[0].equals(0)) && autoCompView[0] != null) {
 						prepareForecast(1);
+						intent.putExtra("number", "1");
+						intent.putExtra("cityData", cityInfo[0]);
+					}
 
 				} else if (check[2].isEnabled() && !(check[2].isChecked())) {
 					autoCompView[1].requestFocus();
 					if (!(autoCompView[0].equals(0))
 							&& !(autoCompView[1].equals(0)))
 						prepareForecast(2);
+					intent.putExtra("number", "2");
+					intent.putExtra("cityData", cityInfo[0]);
+					intent.putExtra("cityData1", cityInfo[1]);
 				}
 
 				else if (check[3].isEnabled() && !(check[3].isChecked())) {
@@ -103,6 +111,11 @@ public class WunderGround extends Activity {
 					if (autoCompView[0] != null && autoCompView[1] != null
 							&& autoCompView[2] != null)
 						prepareForecast(3);
+					intent.putExtra("number", "3");
+					intent.putExtra("cityData", cityInfo[0]);
+					intent.putExtra("cityData1", cityInfo[1]);
+					intent.putExtra("cityData2", cityInfo[2]);
+					
 
 				}
 
@@ -112,6 +125,11 @@ public class WunderGround extends Activity {
 							&& autoCompView[3] != null
 							&& autoCompView[4] != null)
 						prepareForecast(4);
+					intent.putExtra("number", "4");
+					intent.putExtra("cityData", cityInfo[0]);
+					intent.putExtra("cityData1", cityInfo[1]);
+					intent.putExtra("cityData2", cityInfo[2]);
+					intent.putExtra("cityData3", cityInfo[3]);
 
 				} else if (check[4].isEnabled() && (check[4].isChecked())) {
 					autoCompView[4].requestFocus();
@@ -120,6 +138,12 @@ public class WunderGround extends Activity {
 							&& autoCompView[3] != null
 							&& autoCompView[4] != null)
 						prepareForecast(5);
+					intent.putExtra("number", "5");
+					intent.putExtra("cityData", cityInfo[0]);
+					intent.putExtra("cityData1", cityInfo[1]);
+					intent.putExtra("cityData2", cityInfo[2]);
+					intent.putExtra("cityData3", cityInfo[3]);
+					intent.putExtra("cityData4", cityInfo[4]);
 
 				} else {
 
@@ -129,7 +153,14 @@ public class WunderGround extends Activity {
 
 				}
 
-				Intent intent = new Intent(WunderGround.this, MapDisplay.class);
+
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				startActivity(intent);
 
 			}
@@ -139,35 +170,50 @@ public class WunderGround extends Activity {
 					String str = autoCompView[i].getText().toString();
 					String str1 = str.replace(" ", "%20");
 					String weatherLocation[] = str1.split(",");
-					foreCast(weatherLocation, cityInfo[i]);
+					getObject o = new getObject(weatherLocation, cityInfo[i], i);
+					new Thread(o).start();
+
 				}
 			}
 
-			private void foreCast(final String string[],
-					final WeatherInfo cityInfo) {
-				Thread thread = new Thread() {
-					@Override
-					public void run() {
-						if (string.length == 1) {
+			class getObject extends Thread {
+				private String[] string = null;
+				private WeatherInfo city = null;
+				private int num = 0;
 
-							runOnUiThread(new Runnable() {
-								public void run() {
-									String str = "Make sure you use the format (City, State)";
-									Toast.makeText(getApplicationContext(),
-											str, Toast.LENGTH_SHORT).show();
-								}
-							});
+				public getObject(String[] s, WeatherInfo c, int i) {
+					this.city = c;
+					this.string = s;
+					this.num = i;
+				}
 
-						}
-						if (string.length >= 2) {
-							WeatherProcessing.getForecast(string[1], string[0],
-									cityInfo);
-						}
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					if (string.length == 1) {
+
+						runOnUiThread(new Runnable() {
+							public void run() {
+								String str = "Make sure you use the correct format (City, State)";
+								Toast.makeText(getApplicationContext(), str,
+										Toast.LENGTH_SHORT).show();
+							}
+						});
 
 					}
-				};
+					if (string.length >= 2) {
+						city = WeatherProcessing.getForecast(string[1],
+								string[0], city);
 
-				thread.start();
+					}
+					cityInfo[num] = getCity();
+
+				}
+
+				public WeatherInfo getCity() {
+					return city;
+
+				}
 
 			}
 

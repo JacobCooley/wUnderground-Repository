@@ -1,6 +1,10 @@
 package com.example.wunderground;
 
-public class WeatherInfo {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class WeatherInfo implements Parcelable {
 
 	private String weather;
 	private String temp;
@@ -12,14 +16,40 @@ public class WeatherInfo {
 	private String country;
 
 	public WeatherInfo() {
-		weather = null;
-		temp = null;
-		humidity = null;
-		precipitation = null;
-		wind = null;
-		city = null;
-		state = null;
-		country = null;
+		this.weather = null;
+		this.temp = null;
+		this.humidity = null;
+		this.precipitation =null;
+		this.wind = null;
+		this.city = null;
+		this.state = null;
+		this.country = null;
+
+	}
+
+	public WeatherInfo(Parcel in) {
+		readfromParcel(in);
+	}
+
+	private void readfromParcel(Parcel in) {
+		String[] data = new String[8];
+		in.readStringArray(data);
+		this.weather = data[0];
+		this.temp = data[1];
+		this.humidity = data[2];
+		this.precipitation =data[3];
+		this.wind = data[4];
+		this.city = data[5];
+		this.state = data[6];
+		this.country = data[7];
+		/*
+		Log.d("", this.getWeather());
+
+		Log.d("", this.getCity());
+		Log.d("", this.getState());
+		Log.d("", this.getWind());
+		Log.d("", this.getHumidity());
+		Log.d("", this.getPrecipitation());*/
 
 	}
 
@@ -86,5 +116,29 @@ public class WeatherInfo {
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		dest.writeStringArray(new String[] { this.weather, this.temp,
+				this.humidity, this.precipitation, this.wind, this.city,
+				this.state, this.country });
+	}
+
+	public static final Parcelable.Creator<WeatherInfo> CREATOR = new Parcelable.Creator<WeatherInfo>() {
+		public WeatherInfo createFromParcel(Parcel in) {
+			return new WeatherInfo(in);
+		}
+
+		public WeatherInfo[] newArray(int size) {
+			return new WeatherInfo[size];
+		}
+	};
 
 }
