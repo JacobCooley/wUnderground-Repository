@@ -1,3 +1,8 @@
+/**
+* This connects to wundergrounds autocomplete api to 
+* receive a list of places to use
+*/
+
 package com.example.wunderground;
 
 import java.io.IOException;
@@ -48,6 +53,10 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 
 	}
 
+	/**
+	* Runs in a background thread to retrieve the information and publish the results
+	* everytime the data is changed
+	*/
 	@Override
 	public Filter getFilter() {
 		Filter filter = new Filter() {
@@ -83,6 +92,10 @@ public class GetPlaces extends ArrayAdapter<String> implements Filterable {
 		};
 		return filter;
 	}
+	
+	/**
+	* Connects to API and retrieves the JSON data
+	*/
 
 	public static ArrayList<String> autocomplete(String string) {
 

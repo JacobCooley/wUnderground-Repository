@@ -1,3 +1,8 @@
+
+/**
+* Handles all the processing for gathering Weather Information
+*/
+
 package com.example.wunderground;
 
 import java.io.IOException;
@@ -18,6 +23,10 @@ public class WeatherProcessing {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	/**
+	*   Retrieves the weather data and stores it in an object
+	*/
 
 	public static WeatherInfo getForecast(String state, String city,
 			WeatherInfo cityInfo) {
@@ -27,7 +36,7 @@ public class WeatherProcessing {
 
 			StringBuilder sb = new StringBuilder(
 					"http://api.wunderground.com/api/");
-			sb.append("9f7e0bf707f4dafa/conditions/q/");
+			sb.append("8798d81fb8c90ab3/conditions/q/");
 			sb.append(state);
 			sb.append("/");
 			sb.append(city);
@@ -62,11 +71,14 @@ public class WeatherProcessing {
 			cityInfo.setPrecipitation(Observe.getString("precip_today_string"));
 			cityInfo.setWeather(Observe.getString("weather"));
 			cityInfo.setWind(Observe.getString("wind_string"));
+			cityInfo.setIcon(Observe.getString("icon_url"));
 			Observe = jsonObj.getJSONObject("current_observation")
 					.getJSONObject("display_location");
 			cityInfo.setCity(Observe.getString("city"));
 			cityInfo.setState(Observe.getString("state"));
 			cityInfo.setCountry(Observe.getString("country"));
+			cityInfo.setLat(Observe.getString("latitude"));
+			cityInfo.setLon(Observe.getString("longitude"));
 
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, "Cannot process JSON results", e);
@@ -74,7 +86,7 @@ public class WeatherProcessing {
 		return cityInfo;
 	}
 
-	public static void getForecast(String state, WeatherInfo cityInfo) {
+	/*public static void getForecast(String state, WeatherInfo cityInfo) {
 		HttpURLConnection conn = null;
 		StringBuilder jsonResults = new StringBuilder();
 		try {
@@ -114,6 +126,7 @@ public class WeatherProcessing {
 			cityInfo.setPrecipitation(Observe.getString("precip_today_string"));
 			cityInfo.setWeather(Observe.getString("weather"));
 			cityInfo.setWind(Observe.getString("wind_string"));
+			cityInfo.setIcon(Observe.getString("icon_url"));
 			Observe = jsonObj.getJSONObject("current_observation")
 					.getJSONObject("display_location");
 			cityInfo.setState(Observe.getString("state"));
@@ -122,5 +135,5 @@ public class WeatherProcessing {
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, "Cannot process JSON results", e);
 		}
-	}
+	}*/
 }

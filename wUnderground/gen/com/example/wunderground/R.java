@@ -466,7 +466,7 @@ containing a value of this type.
     public static final class id {
         public static final int LinearLayout1=0x7f0b0023;
         public static final int LinearLayout2=0x7f0b0017;
-        public static final int action_settings=0x7f0b0025;
+        public static final int action_settings=0x7f0b0027;
         public static final int adjust_height=0x7f0b0000;
         public static final int adjust_width=0x7f0b0001;
         public static final int book_now=0x7f0b0010;
@@ -490,6 +490,7 @@ containing a value of this type.
         public static final int holo_dark=0x7f0b0007;
         public static final int holo_light=0x7f0b0008;
         public static final int hybrid=0x7f0b0003;
+        public static final int info=0x7f0b0025;
         public static final int map=0x7f0b0024;
         public static final int match_parent=0x7f0b000e;
         public static final int monochrome=0x7f0b0016;
@@ -499,6 +500,7 @@ containing a value of this type.
         public static final int sandbox=0x7f0b000a;
         public static final int satellite=0x7f0b0005;
         public static final int selectionDetails=0x7f0b000d;
+        public static final int snippet=0x7f0b0026;
         public static final int strict_sandbox=0x7f0b000b;
         public static final int terrain=0x7f0b0006;
         public static final int wrap_content=0x7f0b000f;
@@ -509,7 +511,8 @@ containing a value of this type.
     public static final class layout {
         public static final int activity_wunder_ground=0x7f030000;
         public static final int map=0x7f030001;
-        public static final int text_file=0x7f030002;
+        public static final int map_data=0x7f030002;
+        public static final int text_file=0x7f030003;
     }
     public static final class menu {
         public static final int wunder_ground=0x7f0a0000;

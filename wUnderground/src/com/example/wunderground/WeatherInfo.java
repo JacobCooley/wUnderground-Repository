@@ -1,3 +1,10 @@
+
+/**
+* Object to store all the weather information
+*
+* @author Jacob Cooley
+*/
+
 package com.example.wunderground;
 
 import android.os.Parcel;
@@ -6,33 +13,31 @@ import android.util.Log;
 
 public class WeatherInfo implements Parcelable {
 
-	private String weather;
-	private String temp;
-	private String humidity;
-	private String precipitation;
-	private String wind;
-	private String city;
-	private String state;
-	private String country;
+	private String weather = null;
+	private String temp = null;
+	private String humidity = null;
+	private String precipitation = null;
+	private String wind = null;
+	private String city = null;
+	private String state = null;
+	private String country = null;
+	private String lat = null;
+	private String lon = null;
+	private String icon = null;
 
 	public WeatherInfo() {
-		this.weather = null;
-		this.temp = null;
-		this.humidity = null;
-		this.precipitation =null;
-		this.wind = null;
-		this.city = null;
-		this.state = null;
-		this.country = null;
 
 	}
 
 	public WeatherInfo(Parcel in) {
 		readfromParcel(in);
 	}
+	/**
+	*   Must use Parcelable to stream across classes
+	*/
 
 	private void readfromParcel(Parcel in) {
-		String[] data = new String[8];
+		String[] data = new String[11];
 		in.readStringArray(data);
 		this.weather = data[0];
 		this.temp = data[1];
@@ -42,14 +47,9 @@ public class WeatherInfo implements Parcelable {
 		this.city = data[5];
 		this.state = data[6];
 		this.country = data[7];
-		/*
-		Log.d("", this.getWeather());
-
-		Log.d("", this.getCity());
-		Log.d("", this.getState());
-		Log.d("", this.getWind());
-		Log.d("", this.getHumidity());
-		Log.d("", this.getPrecipitation());*/
+		this.lat = data[8];
+		this.lon = data[9];
+		this.icon = data[10];
 
 	}
 
@@ -122,13 +122,39 @@ public class WeatherInfo implements Parcelable {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getLat() {
+		return lat;
+	}
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
+	public String getLon() {
+		return lon;
+	}
+
+	public void setLon(String lon) {
+		this.lon = lon;
+	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
 		dest.writeStringArray(new String[] { this.weather, this.temp,
 				this.humidity, this.precipitation, this.wind, this.city,
-				this.state, this.country });
+				this.state, this.country, this.lat, this.lon, this.icon });
 	}
 
 	public static final Parcelable.Creator<WeatherInfo> CREATOR = new Parcelable.Creator<WeatherInfo>() {
