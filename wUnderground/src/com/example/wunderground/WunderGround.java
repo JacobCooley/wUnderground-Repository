@@ -13,7 +13,9 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,6 +29,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wunderground.R;
@@ -36,15 +39,39 @@ public class WunderGround extends Activity {
 	private AutoCompleteTextView[] autoCompView;
 	private CheckBox[] check;
 	private static WeatherInfo[] cityInfo;
-	private ArrayList<String> validWords, concreteWords;
+	private static ArrayList<String> validWords, concreteWords;
 	private Intent intent;
 	private static boolean validObject = true;
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+
+		// Save UI state changes to the savedInstanceState.
+		// This bundle will be passed to onCreate if the process is
+		// killed and restarted.
+
+		savedInstanceState.putStringArrayList("concreteWords", concreteWords);
+		savedInstanceState.putStringArrayList("validWords", validWords);
+		savedInstanceState.putBoolean("validObject", validObject);
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	// onRestoreInstanceState
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		
+		validWords = savedInstanceState.getStringArrayList("validWords");
+		concreteWords = savedInstanceState.getStringArrayList("concreteWords");
+		validObject = savedInstanceState.getBoolean("validObject");
+		super.onRestoreInstanceState(savedInstanceState);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wunder_ground);
 		intent = new Intent(this, MapDisplay.class);
+		
 
 		// Setting the adapters for the textboxes using Wundergrounds
 		// autocomplete api
@@ -65,6 +92,8 @@ public class WunderGround extends Activity {
 			autoCompView[i].setValidator(new Validator());
 			autoCompView[i].setVisibility(View.INVISIBLE);
 			autoCompView[i].setThreshold(1);
+			autoCompView[i]
+					.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 			autoCompView[i].setOnKeyListener(new KeyListener(autoCompView[i]));
 		}
 
@@ -76,6 +105,7 @@ public class WunderGround extends Activity {
 		check[2] = (CheckBox) findViewById(R.id.checkBox3);
 		check[3] = (CheckBox) findViewById(R.id.checkBox4);
 		check[4] = (CheckBox) findViewById(R.id.checkBox5);
+		
 
 		Button clickButton = (Button) findViewById(R.id.button1);
 		clickButton.setOnClickListener(new OnClickListener() {
@@ -248,12 +278,6 @@ public class WunderGround extends Activity {
 			 */
 
 			private void startMap() {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				startActivity(intent);
 			}
 
@@ -262,21 +286,24 @@ public class WunderGround extends Activity {
 			 */
 
 			private void prepareForecast(int c) {
+
+				Toast.makeText(getApplicationContext(),
+						"Loading Map, Please Wait.", Toast.LENGTH_LONG).show();
+				ArrayList<String[]> loc = new ArrayList<String[]>();
 				for (int i = 0; i < c; i++) {
 					String str = autoCompView[i].getText().toString();
 					String str1 = str.replace(" ", "%20");
-					String weatherLocation[] = str1.split(",");
+					loc.add(str1.split(","));
+				}
 
-					getObject o = new getObject(weatherLocation, cityInfo[i], i);
-					new Thread(o).start();
-					try {
-						o.join();
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+				getObject o = new getObject(loc, cityInfo, c);
+				new Thread(o).start();
+				try {
+					o.join();
+					Thread.sleep(2500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 			}
@@ -288,11 +315,11 @@ public class WunderGround extends Activity {
 			 */
 
 			class getObject extends Thread {
-				private String[] string = null;
-				private WeatherInfo city = null;
+				private ArrayList<String[]> string = null;
+				private WeatherInfo[] city = null;
 				private int num = 0;
 
-				public getObject(String[] s, WeatherInfo c, int i) {
+				public getObject(ArrayList<String[]> s, WeatherInfo[] c, int i) {
 					this.city = c;
 					this.string = s;
 					this.num = i;
@@ -301,25 +328,32 @@ public class WunderGround extends Activity {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					if (string.length == 1) {
 
-						WunderGround.validObject = false;
+					for (int i = 0; i < this.num; i++) {
+						if (WunderGround.validObject == true) {
+							if (string.get(i).length == 1) {
+								WunderGround.validObject = false;
 
-						runOnUiThread(new Runnable() {
-							public void run() {
-								String str = "You must use the format City, State!";
-								Toast.makeText(getApplicationContext(), str,
-										Toast.LENGTH_SHORT).show();
+								runOnUiThread(new Runnable() {
+									public void run() {
+										String str = "You must use the format City, State!";
+										Toast.makeText(getApplicationContext(),
+												str, Toast.LENGTH_SHORT).show();
+									}
+								});
+
 							}
-						});
 
+							if (string.get(i).length >= 2) {
+								Log.d("tag ", string.get(i)[0]);
+								Log.d("tag ", string.get(i)[1]);
+								city[i] = WeatherProcessing.getForecast(
+										string.get(i)[1], string.get(i)[0],
+										city[i]);
+								cityInfo[i] = city[i];
+							}
+						}
 					}
-					if (string.length >= 2) {
-						city = WeatherProcessing.getForecast(string[1],
-								string[0], city);
-						cityInfo[num] = city;
-					}
-
 				}
 
 			}
@@ -354,7 +388,7 @@ public class WunderGround extends Activity {
 		@Override
 		public boolean isValid(CharSequence text) {
 			Log.v("Test", "Checking if valid: " + text);
-			for (String s : validWords)
+			for (String s : validWords) {
 				if (s.toString()
 						.toLowerCase(Locale.getDefault())
 						.trim()
@@ -363,15 +397,16 @@ public class WunderGround extends Activity {
 					concreteWords.add(text.toString());
 					return true;
 				}
-			for (String s : concreteWords)
+			}
+			for (String s : concreteWords) {
 				if (s.toString()
 						.toLowerCase(Locale.getDefault())
 						.trim()
 						.equals(text.toString()
 								.toLowerCase(Locale.getDefault()).trim())) {
 					return true;
-
 				}
+			}
 			return false;
 		}
 
@@ -486,6 +521,13 @@ public class WunderGround extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onDestroy(){
+		
+		super.onDestroy();
+		
 	}
 
 }
