@@ -1,11 +1,10 @@
-
 /**
-* Sample Android Application built for Ideasbynature interview
-* 
-* This is the Main class and handles most of the UI functions
-*
-* @author Jacob Cooley
-*/
+ * Sample Android Application built for Ideasbynature interview
+ * 
+ * This is the Main class and handles most of the UI functions
+ *
+ * @author Jacob Cooley
+ */
 
 package com.example.wunderground;
 
@@ -39,6 +38,7 @@ public class WunderGround extends Activity {
 	private static WeatherInfo[] cityInfo;
 	private ArrayList<String> validWords, concreteWords;
 	private Intent intent;
+	private static boolean validObject = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +81,8 @@ public class WunderGround extends Activity {
 		clickButton.setOnClickListener(new OnClickListener() {
 
 			/**
-			*   Opens the map and transfers objects once button is clicked  
-			*/
+			 * Opens the map and transfers objects once button is clicked
+			 */
 			@Override
 			public void onClick(View v) {
 
@@ -92,140 +92,160 @@ public class WunderGround extends Activity {
 					autoCompView[i].clearFocus();
 				}
 
-				// TODO Auto-generated method stub
-				if (!(check[0].isChecked())) {
-					Toast.makeText(getApplicationContext(),
-							"Select at least one City", Toast.LENGTH_SHORT)
-							.show();
-				} else if (check[1].isEnabled() && !(check[1].isChecked())) {
-					autoCompView[0].requestFocus();
+				try {
+					// TODO Auto-generated method stub
+					if (!(check[0].isChecked())) {
+						Toast.makeText(getApplicationContext(),
+								"Select at least one City", Toast.LENGTH_SHORT)
+								.show();
+					} else if (check[1].isEnabled() && !(check[1].isChecked())) {
+						autoCompView[0].requestFocus();
 
-					if (!(autoCompView[0].getText().toString().equals(""))) {
+						if (!(autoCompView[0].getText().toString().equals(""))) {
 
-						cityInfo[0] = new WeatherInfo();
+							cityInfo[0] = new WeatherInfo();
+							prepareForecast(1);
+							if (validObject == true) {
+								intent.putExtra("number", "1");
+								intent.putExtra("cityData", cityInfo[0]);
+								startMap();
+							}
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"Invalid Input.  Please Try Again.",
+									Toast.LENGTH_SHORT).show();
+						}
 
-						prepareForecast(1);
-						intent.putExtra("number", "1");
-						intent.putExtra("cityData", cityInfo[0]);
-						startMap();
+					} else if (check[2].isEnabled() && !(check[2].isChecked())) {
+
+						autoCompView[1].requestFocus();
+						if (!(autoCompView[0].getText().toString().equals(""))
+								&& !(autoCompView[1].getText().toString()
+										.equals(""))) {
+
+							for (int i = 0; i < 2; i++) {
+								cityInfo[i] = new WeatherInfo();
+							}
+
+							prepareForecast(2);
+							if (validObject == true) {
+								intent.putExtra("number", "2");
+								intent.putExtra("cityData", cityInfo[0]);
+								intent.putExtra("cityData1", cityInfo[1]);
+								startMap();
+							}
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"Invalid Input.  Please Try Again.",
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+
+					else if (check[3].isEnabled() && !(check[3].isChecked())) {
+
+						autoCompView[2].requestFocus();
+						if (!(autoCompView[0].getText().toString().equals(""))
+								&& !(autoCompView[1].getText().toString()
+										.equals(""))
+								&& !(autoCompView[2].getText().toString()
+										.equals(""))) {
+							for (int i = 0; i < 3; i++) {
+								cityInfo[i] = new WeatherInfo();
+							}
+
+							prepareForecast(3);
+							if (validObject == true) {
+								intent.putExtra("number", "3");
+								intent.putExtra("cityData", cityInfo[0]);
+								intent.putExtra("cityData1", cityInfo[1]);
+								intent.putExtra("cityData2", cityInfo[2]);
+								startMap();
+							}
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"Invalid Input.  Please Try Again.",
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+
+					else if (check[4].isEnabled() && !(check[4].isChecked())) {
+						autoCompView[3].requestFocus();
+
+						if (!(autoCompView[0].getText().toString().equals(""))
+								&& !(autoCompView[1].getText().toString()
+										.equals(""))
+								&& !(autoCompView[2].getText().toString()
+										.equals(""))
+								&& !(autoCompView[3].getText().toString()
+										.equals(""))) {
+
+							for (int i = 0; i < 4; i++) {
+								cityInfo[i] = new WeatherInfo();
+							}
+
+							prepareForecast(4);
+							if (validObject == true) {
+								intent.putExtra("number", "4");
+								intent.putExtra("cityData", cityInfo[0]);
+								intent.putExtra("cityData1", cityInfo[1]);
+								intent.putExtra("cityData2", cityInfo[2]);
+								intent.putExtra("cityData3", cityInfo[3]);
+								startMap();
+							}
+						} else {
+
+							Toast.makeText(getApplicationContext(),
+									"Invalid Input.  Please Try Again.",
+									Toast.LENGTH_SHORT).show();
+						}
+
+					} else if (check[4].isEnabled() && (check[4].isChecked())) {
+						autoCompView[4].requestFocus();
+						if (!(autoCompView[0].getText().toString().equals(""))
+								&& !(autoCompView[1].getText().toString()
+										.equals(""))
+								&& !(autoCompView[2].getText().toString()
+										.equals(""))
+								&& !(autoCompView[3].getText().toString()
+										.equals(""))
+								&& !(autoCompView[4].getText().toString()
+										.equals(""))) {
+							for (int i = 0; i < 5; i++) {
+								cityInfo[i] = new WeatherInfo();
+							}
+
+							prepareForecast(5);
+							if (validObject == true) {
+								intent.putExtra("number", "5");
+								intent.putExtra("cityData", cityInfo[0]);
+								intent.putExtra("cityData1", cityInfo[1]);
+								intent.putExtra("cityData2", cityInfo[2]);
+								intent.putExtra("cityData3", cityInfo[3]);
+								intent.putExtra("cityData4", cityInfo[4]);
+								startMap();
+							}
+						} else {
+
+							Toast.makeText(getApplicationContext(),
+									"Invalid Input.  Please Try Again.",
+									Toast.LENGTH_SHORT).show();
+						}
 					} else {
+
 						Toast.makeText(getApplicationContext(),
 								"Invalid Input.  Please Try Again.",
 								Toast.LENGTH_SHORT).show();
 					}
-
-				} else if (check[2].isEnabled() && !(check[2].isChecked())) {
-
-					autoCompView[1].requestFocus();
-					if (!(autoCompView[0].getText().toString().equals(""))
-							&& !(autoCompView[1].getText().toString()
-									.equals(""))) {
-
-						for (int i = 0; i < 2; i++) {
-							cityInfo[i] = new WeatherInfo();
-						}
-
-						prepareForecast(2);
-						intent.putExtra("number", "2");
-						intent.putExtra("cityData", cityInfo[0]);
-						intent.putExtra("cityData1", cityInfo[1]);
-						startMap();
-					} else {
-						Toast.makeText(getApplicationContext(),
-								"Invalid Input.  Please Try Again.",
-								Toast.LENGTH_SHORT).show();
-					}
-				}
-
-				else if (check[3].isEnabled() && !(check[3].isChecked())) {
-
-					autoCompView[2].requestFocus();
-					if (!(autoCompView[0].getText().toString().equals(""))
-							&& !(autoCompView[1].getText().toString()
-									.equals(""))
-							&& !(autoCompView[2].getText().toString()
-									.equals(""))) {
-						for (int i = 0; i < 3; i++) {
-							cityInfo[i] = new WeatherInfo();
-						}
-
-						prepareForecast(3);
-						intent.putExtra("number", "3");
-						intent.putExtra("cityData", cityInfo[0]);
-						intent.putExtra("cityData1", cityInfo[1]);
-						intent.putExtra("cityData2", cityInfo[2]);
-						startMap();
-					} else {
-						Toast.makeText(getApplicationContext(),
-								"Invalid Input.  Please Try Again.",
-								Toast.LENGTH_SHORT).show();
-					}
-				}
-
-				else if (check[4].isEnabled() && !(check[4].isChecked())) {
-					autoCompView[3].requestFocus();
-
-					if (!(autoCompView[0].getText().toString().equals(""))
-							&& !(autoCompView[1].getText().toString()
-									.equals(""))
-							&& !(autoCompView[2].getText().toString()
-									.equals(""))
-							&& !(autoCompView[3].getText().toString()
-									.equals(""))) {
-
-						for (int i = 0; i < 4; i++) {
-							cityInfo[i] = new WeatherInfo();
-						}
-
-						prepareForecast(4);
-						intent.putExtra("number", "4");
-						intent.putExtra("cityData", cityInfo[0]);
-						intent.putExtra("cityData1", cityInfo[1]);
-						intent.putExtra("cityData2", cityInfo[2]);
-						intent.putExtra("cityData3", cityInfo[3]);
-						startMap();
-					}
-
-				} else if (check[4].isEnabled() && (check[4].isChecked())) {
-					autoCompView[4].requestFocus();
-					if (!(autoCompView[0].getText().toString().equals(""))
-							&& !(autoCompView[1].getText().toString()
-									.equals(""))
-							&& !(autoCompView[2].getText().toString()
-									.equals(""))
-							&& !(autoCompView[3].getText().toString()
-									.equals(""))
-							&& !(autoCompView[4].getText().toString()
-									.equals(""))) {
-						for (int i = 0; i < 5; i++) {
-							cityInfo[i] = new WeatherInfo();
-						}
-
-						prepareForecast(5);
-						intent.putExtra("number", "5");
-						intent.putExtra("cityData", cityInfo[0]);
-						intent.putExtra("cityData1", cityInfo[1]);
-						intent.putExtra("cityData2", cityInfo[2]);
-						intent.putExtra("cityData3", cityInfo[3]);
-						intent.putExtra("cityData4", cityInfo[4]);
-						startMap();
-					} else {
-
-						Toast.makeText(getApplicationContext(),
-								"Invalid Input.  Please Try Again.",
-								Toast.LENGTH_SHORT).show();
-					}
-				} else {
-
-					Toast.makeText(getApplicationContext(),
-							"Invalid Input.  Please Try Again.",
-							Toast.LENGTH_SHORT).show();
+				} catch (NullPointerException e) {
+					Log.e("Error..", "Nothing in the weatherinfo object");
+					e.printStackTrace();
 				}
 
 			}
+
 			/**
-			*   Starts the map  
-			*/
+			 * Starts the map
+			 */
 
 			private void startMap() {
 				try {
@@ -236,27 +256,36 @@ public class WunderGround extends Activity {
 				}
 				startActivity(intent);
 			}
-			
+
 			/**
-			*   prepare data for forecast  
-			*/
+			 * prepare data for forecast
+			 */
 
 			private void prepareForecast(int c) {
 				for (int i = 0; i < c; i++) {
 					String str = autoCompView[i].getText().toString();
 					String str1 = str.replace(" ", "%20");
 					String weatherLocation[] = str1.split(",");
+
 					getObject o = new getObject(weatherLocation, cityInfo[i], i);
 					new Thread(o).start();
+					try {
+						o.join();
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				}
+
 			}
-			
+
 			/**
-			*   Runs in a background thread to set the weather data
-			*   into the WeatherInfo object
-			* 
-			*/
+			 * Runs in a background thread to set the weather data into the
+			 * WeatherInfo object
+			 * 
+			 */
 
 			class getObject extends Thread {
 				private String[] string = null;
@@ -274,9 +303,11 @@ public class WunderGround extends Activity {
 					// TODO Auto-generated method stub
 					if (string.length == 1) {
 
+						WunderGround.validObject = false;
+
 						runOnUiThread(new Runnable() {
 							public void run() {
-								String str = "Do not leave empty text fields!";
+								String str = "You must use the format City, State!";
 								Toast.makeText(getApplicationContext(), str,
 										Toast.LENGTH_SHORT).show();
 							}
@@ -286,13 +317,8 @@ public class WunderGround extends Activity {
 					if (string.length >= 2) {
 						city = WeatherProcessing.getForecast(string[1],
 								string[0], city);
+						cityInfo[num] = city;
 					}
-					cityInfo[num] = getCity();
-
-				}
-
-				public WeatherInfo getCity() {
-					return city;
 
 				}
 
@@ -313,18 +339,16 @@ public class WunderGround extends Activity {
 
 	}
 
-	
 	/**
-	*  Set valid words for GetPlaces validation  
-	*/
+	 * Set valid words for GetPlaces validation
+	 */
 	public void setValidWords(ArrayList<String> list) {
 		validWords = list;
 	}
 
-	
 	/**
-	*  Validator to implement the GetPlaces validation  
-	*/
+	 * Validator to implement the GetPlaces validation
+	 */
 	class Validator implements AutoCompleteTextView.Validator {
 
 		@Override
@@ -333,16 +357,18 @@ public class WunderGround extends Activity {
 			for (String s : validWords)
 				if (s.toString()
 						.toLowerCase(Locale.getDefault())
+						.trim()
 						.equals(text.toString()
-								.toLowerCase(Locale.getDefault()))) {
+								.toLowerCase(Locale.getDefault()).trim())) {
 					concreteWords.add(text.toString());
 					return true;
 				}
 			for (String s : concreteWords)
 				if (s.toString()
 						.toLowerCase(Locale.getDefault())
+						.trim()
 						.equals(text.toString()
-								.toLowerCase(Locale.getDefault()))) {
+								.toLowerCase(Locale.getDefault()).trim())) {
 					return true;
 
 				}
@@ -358,10 +384,10 @@ public class WunderGround extends Activity {
 			return "";
 		}
 	}
-	
+
 	/**
-	*    Listener to validate every time focus is changed from the textviews
-	*/
+	 * Listener to validate every time focus is changed from the textviews
+	 */
 
 	class FocusListener implements View.OnFocusChangeListener {
 
@@ -376,10 +402,9 @@ public class WunderGround extends Activity {
 		}
 	}
 
-	
 	/**
-	*   KeyListener to close the keyboard when done is clicked
-	*/
+	 * KeyListener to close the keyboard when done is clicked
+	 */
 	class KeyListener implements OnKeyListener {
 		private AutoCompleteTextView text;
 
@@ -401,8 +426,8 @@ public class WunderGround extends Activity {
 	}
 
 	/**
-	*  Listener for checkbox being changed 
-	*/
+	 * Listener for checkbox being changed
+	 */
 	class CheckListener implements OnCheckedChangeListener {
 
 		private CheckBox c;
@@ -444,8 +469,6 @@ public class WunderGround extends Activity {
 		}
 	};
 
-	
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

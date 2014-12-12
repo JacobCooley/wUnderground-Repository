@@ -1,9 +1,9 @@
 /**
-* This class displays the map and handles all marker creation
-*  and displays the WeatherInfo Objects
-*
-* @author Jacob Cooley
-*/
+ * This class displays the map and handles all marker creation
+ *  and displays the WeatherInfo Objects
+ *
+ * @author Jacob Cooley
+ */
 
 package com.example.wunderground;
 
@@ -11,16 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
@@ -35,10 +33,8 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 
 	private WeatherInfo[] cityData;
 	private String number = null;
-	private InfoAdapter adapter;
 	private GoogleMap gmap = null;
 	private Bitmap img = null;
-	private Canvas c = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +48,8 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 
 		gmap.setInfoWindowAdapter(new InfoAdapter(getLayoutInflater()));
 		gmap.setOnInfoWindowClickListener(this);
+		gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.739,
+				-104.98), 3.0f));
 
 		Bundle data = getIntent().getExtras();
 		number = data.getString("number");
@@ -60,16 +58,6 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 		if (number.equals("1")) {
 			cityData = new WeatherInfo[1];
 			cityData[0] = (WeatherInfo) data.getParcelable("cityData");
-
-			/*
-			 * Log.d("", cityData[0].getWeather()); Log.d("",
-			 * cityData[0].getCity()); Log.d("", cityData[0].getState());
-			 * Log.d("", cityData[0].getWind()); Log.d("",
-			 * cityData[0].getHumidity()); Log.d("",
-			 * cityData[0].getPrecipitation()); Log.d("", cityData[0].getLat());
-			 * Log.d("", cityData[0].getLon()); Log.d("",
-			 * cityData[0].getIcon());
-			 */
 
 		} else if (number.equals("2")) {
 			cityData = new WeatherInfo[2];
@@ -101,10 +89,10 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 		}
 
 	}
-	
+
 	/**
-	*    Whenever the map is ready, add markers  
-	*/
+	 * Whenever the map is ready, add markers
+	 */
 
 	@Override
 	public void onMapReady(GoogleMap map) {
@@ -127,14 +115,13 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 
 	}
 
-	
 	/**
-	*   Method is called once map is ready  
-	*/
+	 * Method is called once map is ready
+	 */
 	public void addMarker(GoogleMap map, int i) {
 
 		for (int k = 0; k < i; k++) {
-			if (cityData[k] != null || !cityData[k].getLat().isEmpty()|| !cityData[k].getLon().isEmpty()) {
+			if (cityData[k] != null) {
 				getBitmapFromURL(cityData[k].getIcon());
 
 				try {
@@ -143,23 +130,31 @@ public class MapDisplay extends Activity implements OnMapReadyCallback,
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				double lat = Double.parseDouble(cityData[k].getLat());
-				double lon = Double.parseDouble(cityData[k].getLon());
-				LatLng mLoc = new LatLng(lat, lon);
-				map.addMarker(new MarkerOptions()
-						.title(cityData[k].getCity() + ", "
-								+ cityData[k].getState() + "\n")
-						.snippet(
-								"\nWeather: " + cityData[k].getWeather()
-										+ "\nTemperature: "
-										+ cityData[k].getTemp()
-										+ "\nHumidity: "
-										+ cityData[k].getHumidity()
-										+ "\nPrecipitation: "
-										+ cityData[k].getPrecipitation()
-										+ "\nWind: " + cityData[k].getWind())
-						.position(mLoc)
-						.icon(BitmapDescriptorFactory.fromBitmap(img)));
+
+				try {
+					double lat = Double.parseDouble(cityData[k].getLat());
+					double lon = Double.parseDouble(cityData[k].getLon());
+					LatLng mLoc = new LatLng(lat, lon);
+					map.addMarker(new MarkerOptions()
+							.title(cityData[k].getCity() + ", "
+									+ cityData[k].getState() + "\n")
+							.snippet(
+									"\nWeather: " + cityData[k].getWeather()
+											+ "\nTemperature: "
+											+ cityData[k].getTemp()
+											+ "\nHumidity: "
+											+ cityData[k].getHumidity()
+											+ "\nPrecipitation: "
+											+ cityData[k].getPrecipitation()
+											+ "\nWind: "
+											+ cityData[k].getWind())
+							.position(mLoc)
+							.icon(BitmapDescriptorFactory.fromBitmap(img)));
+
+				} catch (NullPointerException e) {
+					Log.e("Error..", "Nothing in the weatherinfo object");
+					e.printStackTrace();
+				}
 			} else {
 
 				Toast.makeText(getApplicationContext(), "City Data is null!.",

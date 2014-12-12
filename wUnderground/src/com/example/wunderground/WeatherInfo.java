@@ -1,15 +1,13 @@
-
 /**
-* Object to store all the weather information
-*
-* @author Jacob Cooley
-*/
+ * Object to store all the weather information
+ *
+ * @author Jacob Cooley
+ */
 
 package com.example.wunderground;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class WeatherInfo implements Parcelable {
 
@@ -32,9 +30,10 @@ public class WeatherInfo implements Parcelable {
 	public WeatherInfo(Parcel in) {
 		readfromParcel(in);
 	}
+
 	/**
-	*   Must use Parcelable to stream across classes
-	*/
+	 * Must use Parcelable to stream across classes
+	 */
 
 	private void readfromParcel(Parcel in) {
 		String[] data = new String[11];
@@ -42,7 +41,7 @@ public class WeatherInfo implements Parcelable {
 		this.weather = data[0];
 		this.temp = data[1];
 		this.humidity = data[2];
-		this.precipitation =data[3];
+		this.precipitation = data[3];
 		this.wind = data[4];
 		this.city = data[5];
 		this.state = data[6];
@@ -122,8 +121,6 @@ public class WeatherInfo implements Parcelable {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	
 
 	public String getIcon() {
 		return icon;
